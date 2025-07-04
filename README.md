@@ -1,4 +1,4 @@
-# Mac Setup - Jialiang Liang
+# .vim
 
 ## Prerequisites
 
