@@ -1,6 +1,6 @@
 # .vim
 
-## Prerequisites
+## Prerequisites (deprecated)
 
 1. **brew**: [Install brew](https://brew.sh/)
 2. **iterm2**: [Install iterm2](https://iterm2.com/downloads.html)  
