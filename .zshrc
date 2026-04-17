@@ -1,73 +1,128 @@
-# Amazon Q pre block. Keep at the top of this file.
-[[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh"
+# Kiro CLI pre block. Keep at the top of this file.
+[[ -f "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.pre.zsh" ]] && builtin source "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.pre.zsh"
 
-# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
-# Initialization code that may require console input (password prompts, [y/n]
-# confirmations, etc.) must go above this block; everything else may go below.
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-fi
+# -----------------------------------------------------------------------------
+# zsh modules / options required by zinit + p10k
+# -----------------------------------------------------------------------------
+zmodload zsh/langinfo
+zmodload zsh/system
+setopt extended_glob ksh_glob
+unsetopt sh_glob
 
-# Enable zsh modules
+# -----------------------------------------------------------------------------
+# Homebrew (Apple Silicon)
+# -----------------------------------------------------------------------------
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
+# -----------------------------------------------------------------------------
+# Zsh completion system (omz-style: Tab pops a selectable menu, arrow keys navigate)
+# -----------------------------------------------------------------------------
 autoload -Uz compinit && compinit
-autoload -Uz promptinit && promptinit
+zstyle ':completion:*' menu select                     # arrow-key menu after Tab
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'  # case-insensitive match
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}  # colorize menu entries
+zstyle ':completion:*' group-name ''                   # group results by type
+zstyle ':completion:*:descriptions' format '%F{yellow}%d%f'          # omz uses non-bold headers
+zstyle ':completion:*:messages'     format '%F{purple}%d%f'
+zstyle ':completion:*:warnings'     format '%F{red}no matches for: %d%f'
 
-# Initialize zinit
+# -----------------------------------------------------------------------------
+# Zinit
+# -----------------------------------------------------------------------------
 source ~/.local/share/zinit/zinit.git/zinit.zsh
+
+# -----------------------------------------------------------------------------
+# Prompt: hand-rolled (robbyrussell-inspired, pure zsh, no external deps)
+# Docs: https://zsh.sourceforge.io/Doc/Release/Prompt-Expansion.html
+# -----------------------------------------------------------------------------
+autoload -Uz vcs_info
+zstyle ':vcs_info:git:*' check-for-changes true
+zstyle ':vcs_info:git:*' unstagedstr '✗'
+zstyle ':vcs_info:git:*' stagedstr  '+'
+
+# Hook: also flag untracked files (vcs_info doesn't detect them natively).
+# Appends `?` to the unstaged indicator when untracked files exist.
+zstyle ':vcs_info:git*+set-message:*' hooks git-untracked
++vi-git-untracked() {
+  if [[ $(git rev-parse --is-inside-work-tree 2>/dev/null) == 'true' ]] && \
+     git status --porcelain 2>/dev/null | grep -q '^??'; then
+    hook_com[unstaged]+='?'
+  fi
+}
+# omz-style palette, bold + bright ANSI for high saturation
+# Colors 9/10/11/12/14 are the bright variants of red/green/yellow/blue/cyan
+zstyle ':vcs_info:git:*' formats       ' %F{12}git:(%F{9}%b%F{12})%F{11}%u%c%f'
+zstyle ':vcs_info:git:*' actionformats ' %F{12}git:(%F{9}%b|%a%F{12})%f'
+precmd() { vcs_info }
+setopt prompt_subst
+
+# Prompt: bold throughout; bright-green ➜ (bright-red on error), bright-cyan path
+PROMPT='%B%(?.%F{10}➜%f.%F{9}➜%f) %F{14}%c%f${vcs_info_msg_0_}%b '
 
 # Plugins
 zinit light zdharma-continuum/fast-syntax-highlighting
-#zinit light zsh-users/zsh-autosuggestions
-#zinit light zsh-users/zsh-completions
-zinit ice atclone"./install --all" atpull"%atclone"
-zinit light junegunn/fzf
+zinit light zsh-users/zsh-autosuggestions
+zinit light zsh-users/zsh-completions
 
-# Theme (optional)
-zinit light romkatv/powerlevel10k
+# omz git aliases (lightweight cherry-pick)
+zinit snippet OMZP::git
 
-# Dev deps
-
-# PATH for Python packages
+# -----------------------------------------------------------------------------
+# PATH & env
+# -----------------------------------------------------------------------------
+export PATH="$HOME/bin:$PATH"
 export PATH="/Users/jiallian/Library/Python/3.9/bin:$PATH"
+export PATH="$PATH:$HOME/.toolbox/bin"
 
-# Java
-export JAVA_HOME="/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home"
+export JAVA_HOME="/Library/Java/JavaVirtualMachines/amazon-corretto-21.jdk/Contents/Home"
 
 # NVM
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
-# Pyenv
+# pyenv
 export PYENV_ROOT="$HOME/.pyenv"
-export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init --path)"
-eval "$(pyenv init -)"
+[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+command -v pyenv >/dev/null && eval "$(pyenv init -)"
 
-# Conda
-__conda_setup="$('/opt/anaconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "/opt/anaconda3/etc/profile.d/conda.sh" ]; then
-        . "/opt/anaconda3/etc/profile.d/conda.sh"
-   else
-        export PATH="/opt/anaconda3/bin:$PATH"
-    fi
-fi
-unset __conda_setup
+# mise
+eval "$(mise activate zsh)"
 
-# Toolbox bin
-export PATH=$PATH:$HOME/.toolbox/bin
+# AWS / Bedrock
+export CLAUDE_MODEL_PROVIDER="bedrock"
+export AWS_PROFILE="bedrock"
+export AWS_REGION="us-west-2"
 
-# Aliases, exports, etc
-export PATH="$HOME/bin:$PATH"
-alias ll='ls -lah'
+# Rust
+export RUST_BACKTRACE=full
 
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+# Finch (Docker replacement)
+export DOCKER_HOST=unix:///Applications/Finch/lima/data/finch/sock/finch.sock
+export DOCKER_CONFIG=$HOME/.finch
 
-# fzf
+# -----------------------------------------------------------------------------
+# Aliases
+# -----------------------------------------------------------------------------
+alias ls='ls -G'
+alias ll='ls -lG'
+alias la='ls -laG'
+alias grep='grep --color=auto'
+
+# Force a universally-supported TERM for SSH sessions (avoids garbled input
+# when the remote host doesn't have ghostty/iterm2 terminfo installed)
+ssh() { TERM=xterm-256color command ssh "$@" }
+export LSCOLORS=ExFxBxDxCxegedabagacad
+
+# -----------------------------------------------------------------------------
+# fzf (brew)
+# -----------------------------------------------------------------------------
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-# Amazon Q post block. Keep at the bottom of this file.
-[[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh"
+
+# -----------------------------------------------------------------------------
+# Kiro integration
+# -----------------------------------------------------------------------------
+[[ "$TERM_PROGRAM" == "kiro" ]] && . "$(kiro --locate-shell-integration-path zsh)"
+
+# Kiro CLI post block. Keep at the bottom of this file.
+[[ -f "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.post.zsh"
