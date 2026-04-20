@@ -1,0 +1,12 @@
+# Core CLI tools (apt/yum package names)
+# Some tools may not be in older distro repos — install.sh handles fallbacks
+git
+zsh
+curl
+wget
+jq
+htop
+fzf
+ripgrep
+neovim
+unzip

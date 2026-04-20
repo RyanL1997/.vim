@@ -1,31 +1,69 @@
-# .vim
+# Dotfiles
 
-## Prerequisites (deprecated)
+Cross-platform zsh environment for macOS, Linux, and WSL.
 
-1. **brew**: [Install brew](https://brew.sh/)
-2. **iterm2**: [Install iterm2](https://iterm2.com/downloads.html)  
-   _(Recommended but not super necessary; you can still use the default terminal)_
-   - [Iterm2 theme profile](https://github.com/RyanL1997/itermprofile.git)
-3. **oh-my-zsh**: [Install oh-my-zsh](https://ohmyz.sh/)
-4. **git**: Install git via `brew install git`
+## Quick Start
 
-## Brew Packages to Install
-*some of the following may require extra config of `.zshrc`*
+```bash
+git clone https://github.com/RyanL1997/.vim.git ~/.dotfiles
+cd ~/.dotfiles
+./install.sh
+exec zsh
+```
 
-1. **fzf**: [Install fzf](https://formulae.brew.sh/formula/fzf)  
-   _Helps you better find previous commands_  
-   - Run by: `ctrl + R`
+## What's Included
 
-2. **zsh-syntax-highlighting**: [Install zsh-syntax-highlighting](https://formulae.brew.sh/formula/zsh-syntax-highlighting#default)  
-   _As the name suggests_
+- **zsh** with [zinit](https://github.com/zdharma-continuum/zinit) — syntax highlighting, autosuggestions, completions, omz git aliases
+- **Prompt** — hand-rolled single-line (`➜ dir git:(branch) ✗`), no external theme
+- **Version managers** — [nvm](https://github.com/nvm-sh/nvm) (lazy-loaded), [pyenv](https://github.com/pyenv/pyenv), [mise](https://github.com/jdx/mise)
+- **CLI tools** — fzf, ripgrep, jq, neovim, htop, yazi, zellij, gh
+- **Terminal** — [Ghostty](https://ghostty.org/) config (Tokyo Night theme)
+- **tmux** — starter config for Linux cloud dev sessions (`.tmux.conf`, symlinked on Linux only)
 
-3. **jq**: [Install jq](https://formulae.brew.sh/formula/jq#default)  
-   _Easy to read JSON format_  
-   - Run by piping to jq: `<command> | jq`
+## Repo Structure
 
-4. **zsh-autosuggestions**: [Install zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions)  
-   _Auto-suggesting based on the command execution history_
+```text
+.
+├── install.sh                  # Entry point — detects OS, delegates
+├── .zshrc                      # Cross-platform zsh config
+├── .tmux.conf                  # tmux config (Linux only)
+├── ghostty/config              # Ghostty terminal settings
+├── platform/
+│   ├── common/setup.sh         # Zinit, nvm, pyenv, symlinks
+│   ├── mac/
+│   │   ├── install.sh          # Homebrew + Brewfile
+│   │   └── Brewfile
+│   └── linux/
+│       ├── install.sh          # apt/yum + GitHub release fallbacks
+│       └── packages.txt
+└── iterm2/                     # Legacy iTerm2 profiles
+```
 
-5. **htop**: [Install htop](https://formulae.brew.sh/formula/htop#default)  
-   _Activity monitor for terminal version (Not Really Necessary)_  
-   - Run by: `sudo htop`
+## Platform Support
+
+- macOS (Apple Silicon / Intel) — Homebrew
+- Ubuntu / Debian — apt
+- Amazon Linux 2 — yum
+- WSL2 — same as Linux
+
+## Customization
+
+**Prompt** — edit the `PROMPT=` line in `.zshrc`. Colors use bright ANSI codes (9-14). Reference: [zsh prompt expansion](https://zsh.sourceforge.io/Doc/Release/Prompt-Expansion.html).
+
+**Terminal theme** — edit `ghostty/config`. Run `ghostty +list-themes` to browse.
+
+**Adding tools** — macOS: add to `platform/mac/Brewfile`. Linux: add to `platform/linux/packages.txt`.
+
+## Post-Install
+
+The installer sets up nvm and pyenv but does **not** install any Node or Python versions. Install what you need:
+
+```bash
+nvm install <version>           # e.g. nvm install 22
+pyenv install <version>         # e.g. pyenv install 3.12
+```
+
+## Notes
+
+- SSH sessions force `TERM=xterm-256color` to prevent garbled input on remote hosts without Ghostty's terminfo. See [Ghostty terminfo docs](https://ghostty.org/docs/help/terminfo).
+- nvm is lazy-loaded for faster shell startup — it initializes on first `node`/`npm` call, not at shell open.

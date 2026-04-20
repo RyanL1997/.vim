@@ -1,0 +1,29 @@
+# Core CLI tools
+brew "fzf"
+brew "gh"
+brew "git-lfs"
+brew "git-secrets"
+brew "htop"
+brew "jq"
+brew "mise"
+brew "neovim"
+brew "ripgrep"
+brew "wget"
+brew "yazi"
+brew "zellij"
+
+# Languages / runtimes (managed separately via nvm/pyenv, but useful as fallback)
+brew "openjdk@21"
+
+# Container tools
+brew "colima"
+brew "docker", link: false
+brew "act"
+
+# Other
+brew "graphviz"
+brew "sbt"
+brew "unison"
+
+# Casks (macOS GUI apps)
+cask "docker-desktop"
