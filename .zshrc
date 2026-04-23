@@ -1,9 +1,9 @@
-# Kiro CLI pre block. Keep at the top of this file.
-if [[ "$OSTYPE" == darwin* ]]; then
-  [[ -f "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.pre.zsh" ]] && builtin source "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.pre.zsh"
-else
-  [[ -f "${HOME}/.config/kiro-cli/shell/zshrc.pre.zsh" ]] && builtin source "${HOME}/.config/kiro-cli/shell/zshrc.pre.zsh"
-fi
+# Kiro CLI pre block — uncomment if using Kiro on this machine.
+# if [[ "$OSTYPE" == darwin* ]]; then
+#   [[ -f "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.pre.zsh" ]] && builtin source "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.pre.zsh"
+# else
+#   [[ -f "${HOME}/.config/kiro-cli/shell/zshrc.pre.zsh" ]] && builtin source "${HOME}/.config/kiro-cli/shell/zshrc.pre.zsh"
+# fi
 
 # -----------------------------------------------------------------------------
 # Homebrew
@@ -75,9 +75,20 @@ export PATH="$HOME/bin:$PATH"
 export PATH="$PATH:$HOME/.toolbox/bin"
 
 if [[ "$OSTYPE" == darwin* ]]; then
-  export JAVA_HOME="/Library/Java/JavaVirtualMachines/amazon-corretto-21.jdk/Contents/Home"
-elif [[ -d /usr/lib/jvm/amazon-corretto-21 ]]; then
-  export JAVA_HOME="/usr/lib/jvm/amazon-corretto-21"
+  [[ -d "/Library/Java/JavaVirtualMachines/amazon-corretto-21.jdk/Contents/Home" ]] && \
+    export JAVA_HOME="/Library/Java/JavaVirtualMachines/amazon-corretto-21.jdk/Contents/Home"
+else
+  # Linux: try common Corretto paths, then fall back to /etc/alternatives
+  for candidate in \
+      /usr/lib/jvm/amazon-corretto-21 \
+      /usr/lib/jvm/java-21-amazon-corretto \
+      /usr/lib/jvm/java-21-amazon-corretto.$(uname -m) \
+      /usr/lib/jvm/default-java; do
+    if [[ -d "$candidate" ]]; then
+      export JAVA_HOME="$candidate"
+      break
+    fi
+  done
 fi
 
 # NVM (lazy-loaded: only initializes when you first call nvm/node/npm/npx)
@@ -99,10 +110,14 @@ command -v pyenv >/dev/null && eval "$(pyenv init -)"
 # mise (for other tools beyond node/python)
 command -v mise >/dev/null && eval "$(mise activate zsh)"
 
-# AWS / Bedrock
-export CLAUDE_MODEL_PROVIDER="bedrock"
-export AWS_PROFILE="bedrock"
-export AWS_REGION="us-west-2"
+# AWS / Bedrock — only activate if the `bedrock` profile is configured locally.
+# Matches [bedrock] in credentials or [profile bedrock] in config; 2>/dev/null
+# suppresses "no such file" when ~/.aws/ doesn't exist yet (e.g. fresh machine).
+if grep -qE '^\[(profile )?bedrock\]' ~/.aws/credentials ~/.aws/config 2>/dev/null; then
+  export CLAUDE_MODEL_PROVIDER="bedrock"
+  export AWS_PROFILE="bedrock"
+  export AWS_REGION="us-west-2"
+fi
 
 # Rust
 export RUST_BACKTRACE=full
@@ -139,13 +154,13 @@ ssh() { TERM=xterm-256color command ssh "$@" }
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 # -----------------------------------------------------------------------------
-# Kiro integration
+# Kiro integration — uncomment if using Kiro on this machine.
 # -----------------------------------------------------------------------------
-[[ "$TERM_PROGRAM" == "kiro" ]] && command -v kiro >/dev/null && . "$(kiro --locate-shell-integration-path zsh)"
-
-# Kiro CLI post block. Keep at the bottom of this file.
-if [[ "$OSTYPE" == darwin* ]]; then
-  [[ -f "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.post.zsh"
-else
-  [[ -f "${HOME}/.config/kiro-cli/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/.config/kiro-cli/shell/zshrc.post.zsh"
-fi
+# [[ "$TERM_PROGRAM" == "kiro" ]] && command -v kiro >/dev/null && . "$(kiro --locate-shell-integration-path zsh)"
+#
+# Kiro CLI post block.
+# if [[ "$OSTYPE" == darwin* ]]; then
+#   [[ -f "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.post.zsh"
+# else
+#   [[ -f "${HOME}/.config/kiro-cli/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/.config/kiro-cli/shell/zshrc.post.zsh"
+# fi

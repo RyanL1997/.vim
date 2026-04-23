@@ -45,17 +45,16 @@ if [[ "$OSTYPE" == linux* && -f "$REPO_DIR/.tmux.conf" ]]; then
   ln -sf "$REPO_DIR/.tmux.conf" ~/.tmux.conf
 fi
 
-# Set zsh as default shell (if not already)
+# Default shell — print instructions instead of running chsh interactively.
+# `chsh` typically prompts for a password and hangs in non-interactive shells.
 if [[ "$SHELL" != */zsh ]]; then
-  ZSH_PATH=$(command -v zsh)
+  ZSH_PATH="$(command -v zsh || true)"
   if [[ -n "$ZSH_PATH" ]]; then
-    echo "==> Setting zsh as default shell..."
-    if grep -q "$ZSH_PATH" /etc/shells; then
-      chsh -s "$ZSH_PATH"
-    else
-      echo "$ZSH_PATH" | sudo tee -a /etc/shells
-      chsh -s "$ZSH_PATH"
+    echo "==> To make zsh your default shell, run:"
+    if ! grep -q "$ZSH_PATH" /etc/shells 2>/dev/null; then
+      echo "       echo \"$ZSH_PATH\" | sudo tee -a /etc/shells"
     fi
+    echo "       chsh -s \"$ZSH_PATH\""
   fi
 fi
 

@@ -1,12 +1,14 @@
 # Core CLI tools (apt/yum package names)
-# Some tools may not be in older distro repos — install.sh handles fallbacks
+# Some tools may not be in older distro repos (e.g. AL2) — install.sh handles fallbacks.
 git
 zsh
 curl
 wget
 jq
 htop
+tmux
+unzip
+# Available on most modern distros; fallbacks exist in install.sh for AL2
 fzf
 ripgrep
 neovim
-unzip
