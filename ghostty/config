@@ -1,3 +1,8 @@
-# Preferred theme: Citruszest
-# (auto-written via `ghostty +list-themes` → `w` to ~/.config/ghostty/auto/theme.ghostty)
+# Default theme — tracked here so new machines pick it up automatically.
+# Browse alternatives with `ghostty +list-themes`.
+theme = Citruszest
+
+# Per-machine override (optional — `?` skips silently if absent).
+# `ghostty +list-themes` → `w` writes the selected theme here, and because
+# this include comes last, it wins over the default above.
 config-file = ?auto/theme.ghostty
