@@ -2,6 +2,13 @@
 # Browse alternatives with `ghostty +list-themes`.
 theme = Citruszest
 
+# Cursor — must come after `theme`, which sets a dim #666666 that's hard to
+# spot on a dark background. Values carried over from the old iTerm2 profile.
+cursor-color = #d0d0d0
+cursor-text = #ffffff
+cursor-style = block
+cursor-style-blink = true
+
 # Per-machine override (optional — `?` skips silently if absent).
 # `ghostty +list-themes` → `w` writes the selected theme here, and because
 # this include comes last, it wins over the default above.
