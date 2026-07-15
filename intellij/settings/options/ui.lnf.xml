@@ -1,0 +1,6 @@
+<application>
+  <component name="UISettings">
+    <option name="SCROLL_TAB_LAYOUT_IN_EDITOR" value="false" />
+    <option name="UI_DENSITY" value="COMPACT" />
+  </component>
+</application>

@@ -19,6 +19,7 @@ exec zsh
 - **CLI tools** — fzf, ripgrep, jq, neovim, htop, yazi, zellij, gh
 - **Terminal** — [Ghostty](https://ghostty.org/) config (Citruszest theme, solid block cursor)
 - **tmux** — starter config for Linux cloud dev sessions (`.tmux.conf`, symlinked on Linux only)
+- **IntelliJ IDEA** — portable IDE settings backup/restore (`intellij/`, secrets excluded)
 
 ## Repo Structure
 
@@ -36,6 +37,7 @@ exec zsh
 │   └── linux/
 │       ├── install.sh          # apt/yum + GitHub release fallbacks
 │       └── packages.txt
+├── intellij/                   # IntelliJ IDEA settings + backup/restore.sh
 └── iterm2/                     # Legacy iTerm2 profiles
 ```
 

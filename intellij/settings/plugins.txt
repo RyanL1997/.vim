@@ -1,0 +1,23 @@
+amazon-auth
+ANTLR v4-Tool
+claude-code-jetbrains-plugin
+clouds-docker-impl
+clouds-kubernetes
+coderpillr-theme.jar
+darcula-pitch-black.jar
+DarkCode-Theme-JetBrains.jar
+dracula-theme
+fullLine
+ide-plugin
+intellij-xcode-dark-theme.jar
+maven
+monokai-pro
+plugin-amazonq
+plugin-core
+restructuredtext
+Scala
+Shell Script
+vcs-github-IU
+vcs-gitlab-IU
+vcs-perforce
+vcs-svn

@@ -1,0 +1,30 @@
+<application>
+  <component name="ProjectManager">
+    <defaultProject>
+      <component name="PropertiesComponent"><![CDATA[{}]]></component>
+      <component name="WindowStateProjectService">
+        <state x="273" y="165" width="861" height="674" key="new project wizard" timestamp="1748118934358">
+          <screen x="0" y="38" width="1512" height="889" />
+        </state>
+        <state x="273" y="165" width="861" height="674" key="new project wizard/0.38.1512.889" timestamp="1748118934358" />
+        <state x="4535" y="227" width="800" height="715" key="new project wizard/0.38.1512.892/4072.25.2560.1415/1512.25.2560.1415" timestamp="1745354424785" />
+      </component>
+      <component name="masterDetails">
+        <states>
+          <state key="ProjectJDKs.UI">
+            <settings>
+              <last-edited>corretto-11</last-edited>
+              <splitter-proportions>
+                <option name="proportions">
+                  <list>
+                    <option value="0.2" />
+                  </list>
+                </option>
+              </splitter-proportions>
+            </settings>
+          </state>
+        </states>
+      </component>
+    </defaultProject>
+  </component>
+</application>

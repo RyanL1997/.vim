@@ -1,0 +1,5 @@
+<application>
+  <component name="CodeWhispererSettings">
+    <option name="optOutOfCodeWhispererCampaign" value="true" />
+  </component>
+</application>
