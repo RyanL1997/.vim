@@ -72,6 +72,7 @@ zinit snippet OMZP::git
 # PATH & env
 # -----------------------------------------------------------------------------
 export PATH="$HOME/bin:$PATH"
+export PATH="$HOME/.local/bin:$PATH"
 export PATH="$PATH:$HOME/.toolbox/bin"
 
 if [[ "$OSTYPE" == darwin* ]]; then

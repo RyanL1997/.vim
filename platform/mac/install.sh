@@ -14,7 +14,7 @@ fi
 
 # Install packages from Brewfile
 echo "==> Installing brew packages..."
-brew bundle --file="$SCRIPT_DIR/Brewfile" --no-lock
+brew bundle --file="$SCRIPT_DIR/Brewfile"
 
 # Install fzf key bindings
 echo "==> Configuring fzf..."
