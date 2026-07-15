@@ -75,6 +75,13 @@ export PATH="$HOME/bin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$PATH:$HOME/.toolbox/bin"
 
+# VS Code CLI (`code`) — the macOS app bundle ships it but doesn't add it to PATH
+if [[ "$OSTYPE" == darwin* ]]; then
+  vscode_bin="/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
+  [[ -d "$vscode_bin" ]] && export PATH="$PATH:$vscode_bin"
+  unset vscode_bin
+fi
+
 if [[ "$OSTYPE" == darwin* ]]; then
   [[ -d "/Library/Java/JavaVirtualMachines/amazon-corretto-21.jdk/Contents/Home" ]] && \
     export JAVA_HOME="/Library/Java/JavaVirtualMachines/amazon-corretto-21.jdk/Contents/Home"
