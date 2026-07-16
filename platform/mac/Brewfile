@@ -13,7 +13,10 @@ brew "yazi"
 brew "zellij"
 
 # Languages / runtimes (managed separately via nvm/pyenv, but useful as fallback)
-brew "openjdk@21"
+# Amazon Corretto — opensearch/sql builds & tests against JDK 21 and 25.
+# Casks install into /Library/Java/JavaVirtualMachines (require sudo on install).
+cask "corretto@21"
+cask "corretto@25"
 
 # Container tools
 brew "colima"

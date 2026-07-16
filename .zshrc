@@ -83,8 +83,18 @@ if [[ "$OSTYPE" == darwin* ]]; then
 fi
 
 if [[ "$OSTYPE" == darwin* ]]; then
-  [[ -d "/Library/Java/JavaVirtualMachines/amazon-corretto-21.jdk/Contents/Home" ]] && \
-    export JAVA_HOME="/Library/Java/JavaVirtualMachines/amazon-corretto-21.jdk/Contents/Home"
+  # Default to Corretto 25 (newest LTS; opensearch/sql builds on it), fall back
+  # to Corretto 21, then brew openjdk@21 as a last resort. Switch per-shell with
+  # the `jdk` helper below (e.g. `jdk 21`) for the other CI matrix leg.
+  for candidate in \
+      "/Library/Java/JavaVirtualMachines/amazon-corretto-25.jdk/Contents/Home" \
+      "/Library/Java/JavaVirtualMachines/amazon-corretto-21.jdk/Contents/Home" \
+      "/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home"; do
+    if [[ -d "$candidate" ]]; then
+      export JAVA_HOME="$candidate"
+      break
+    fi
+  done
 else
   # Linux: try common Corretto paths, then fall back to /etc/alternatives
   for candidate in \
@@ -98,6 +108,21 @@ else
     fi
   done
 fi
+[[ -n "$JAVA_HOME" && -x "$JAVA_HOME/bin/java" ]] && export PATH="$JAVA_HOME/bin:$PATH"
+
+# Switch the JDK for the current shell: `jdk 21` / `jdk 25` (opensearch/sql tests both)
+jdk() {
+  local v="${1:?usage: jdk <major-version, e.g. 21 or 25>}" home
+  if [[ "$OSTYPE" == darwin* ]]; then
+    home="/Library/Java/JavaVirtualMachines/amazon-corretto-$v.jdk/Contents/Home"
+  else
+    home="/usr/lib/jvm/amazon-corretto-$v"
+  fi
+  [[ -d "$home" ]] || { echo "Corretto $v not found at $home" >&2; return 1; }
+  export JAVA_HOME="$home"
+  export PATH="$home/bin:$PATH"
+  java -version
+}
 
 # NVM (lazy-loaded: only initializes when you first call nvm/node/npm/npx)
 export NVM_DIR="$HOME/.nvm"
