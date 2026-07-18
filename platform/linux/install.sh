@@ -24,10 +24,10 @@ echo "    Package manager: $PKG_MGR"
 # --- detect architecture (for GitHub release fallbacks) ----------------------
 ARCH_RAW="$(uname -m)"
 case "$ARCH_RAW" in
-  x86_64|amd64)   RG_ARCH="x86_64-unknown-linux-musl"; NVIM_ARCH="x86_64" ;;
-  aarch64|arm64)  RG_ARCH="aarch64-unknown-linux-gnu"; NVIM_ARCH="arm64"  ;;
+  x86_64|amd64)   RG_ARCH="x86_64-unknown-linux-musl"; NVIM_ARCH="x86_64"; BTOP_ARCH="x86_64-unknown-linux-musl"  ;;
+  aarch64|arm64)  RG_ARCH="aarch64-unknown-linux-gnu"; NVIM_ARCH="arm64";  BTOP_ARCH="aarch64-unknown-linux-musl" ;;
   *)              echo "Warning: unknown arch $ARCH_RAW — fallbacks may fail"
-                  RG_ARCH="x86_64-unknown-linux-musl"; NVIM_ARCH="x86_64" ;;
+                  RG_ARCH="x86_64-unknown-linux-musl"; NVIM_ARCH="x86_64"; BTOP_ARCH="x86_64-unknown-linux-musl"  ;;
 esac
 
 # --- install packages from packages.txt, one at a time (don't abort on miss) -
@@ -98,6 +98,24 @@ if ! command -v nvim &>/dev/null; then
   fi
   popd >/dev/null
   rm -rf "$TMPDIR_NV"
+fi
+
+# --- btop fallback -----------------------------------------------------------
+# Static musl binary from GitHub releases (aristocratos/btop). Covers AL2 and
+# any distro whose repos lack btop; WSL2 uses this same path.
+if ! command -v btop &>/dev/null; then
+  echo "==> Installing btop ($ARCH_RAW) from GitHub release..."
+  TARBALL="btop-${BTOP_ARCH}.tar.gz"
+  TMPDIR_BT="$(mktemp -d)"
+  pushd "$TMPDIR_BT" >/dev/null
+  if curl -fLO "https://github.com/aristocratos/btop/releases/latest/download/${TARBALL}"; then
+    tar xzf "$TARBALL"
+    sudo cp btop/bin/btop /usr/local/bin/ && echo "    [ok] btop installed"
+  else
+    echo "    [warn] btop release download failed — skipping"
+  fi
+  popd >/dev/null
+  rm -rf "$TMPDIR_BT"
 fi
 
 echo "==> Linux setup complete"
