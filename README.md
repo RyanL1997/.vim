@@ -16,7 +16,7 @@ exec zsh
 - **zsh** with [zinit](https://github.com/zdharma-continuum/zinit) — syntax highlighting, autosuggestions, completions, omz git aliases
 - **Prompt** — hand-rolled single-line (`➜ dir git:(branch) ✗`), no external theme
 - **Version managers** — [nvm](https://github.com/nvm-sh/nvm) (lazy-loaded), [pyenv](https://github.com/pyenv/pyenv), [mise](https://github.com/jdx/mise)
-- **CLI tools** — fzf, ripgrep, jq, neovim, htop, yazi, zellij, gh
+- **CLI tools** — fzf, ripgrep, jq, neovim, btop, htop, yazi, zellij, gh
 - **Terminal** — [Ghostty](https://ghostty.org/) config (Citruszest theme, solid block cursor)
 - **tmux** — starter config for Linux cloud dev sessions (`.tmux.conf`, symlinked on Linux only)
 - **IntelliJ IDEA** — portable IDE settings backup/restore (`intellij/`, secrets excluded)

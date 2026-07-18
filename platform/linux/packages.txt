@@ -12,3 +12,5 @@ unzip
 fzf
 ripgrep
 neovim
+# btop: modern distros (Ubuntu 22.04+, EPEL). No release fallback — skipped on AL2.
+btop
