@@ -18,11 +18,22 @@ fi
 # Zsh completion system (omz-style: Tab menu, arrow keys, cached daily)
 # -----------------------------------------------------------------------------
 autoload -Uz compinit
-if [[ -n ~/.zcompdump(#qN.mh+24) ]]; then
-  compinit
-else
-  compinit -C
-fi
+# Rebuild the dump only when it's >24h old; otherwise load it with -C (skips
+# the slow security audit). The (#q...) glob qualifier needs extended_glob —
+# without it the test is a literal, always-non-empty string and every shell
+# paid for a full rebuild. Scoped to this block so `git reset HEAD^` etc.
+# don't start failing with "no matches found".
+# compinit leaves an unchanged dump untouched, so bump its mtime ourselves —
+# otherwise it stays "stale" forever and we're back to rebuilding every shell.
+() {
+  setopt local_options extended_glob
+  local dump=${ZDOTDIR:-$HOME}/.zcompdump   # compinit's own default path
+  if [[ -n $dump(#qN.mh+24) ]]; then
+    compinit -d $dump && touch $dump
+  else
+    compinit -C -d $dump
+  fi
+}
 zstyle ':completion:*' menu select
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
@@ -138,7 +149,10 @@ npx()  { lazy_load_nvm; npx "$@" }
 # pyenv
 export PYENV_ROOT="$HOME/.pyenv"
 [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
-command -v pyenv >/dev/null && eval "$(pyenv init -)"
+# --no-rehash: skip regenerating shims at every shell start (~120ms). pyenv
+# already rehashes after `pyenv install` and `pip install`; run `pyenv rehash`
+# by hand if a new console script ever goes missing.
+command -v pyenv >/dev/null && eval "$(pyenv init - --no-rehash zsh)"
 
 # mise (for other tools beyond node/python)
 command -v mise >/dev/null && eval "$(mise activate zsh)"
