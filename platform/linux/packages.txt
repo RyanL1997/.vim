@@ -12,5 +12,7 @@ unzip
 fzf
 ripgrep
 neovim
-# btop: modern distros (Ubuntu 22.04+, EPEL). No release fallback — skipped on AL2.
+# btop: modern distros (Ubuntu 22.04+, EPEL); install.sh falls back to the
+# GitHub release elsewhere (e.g. AL2).
 btop
+# zellij isn't in the default repos — install.sh always uses the GitHub release.
