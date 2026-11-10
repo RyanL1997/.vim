@@ -39,6 +39,17 @@ if [[ -f "$REPO_DIR/ghostty/config" ]]; then
   ln -sf "$REPO_DIR/ghostty/config" ~/.config/ghostty/config
 fi
 
+# Symlink zellij config (both platforms; back up a hand-edited one first)
+if [[ -f "$REPO_DIR/zellij/config.kdl" ]]; then
+  echo "==> Symlinking zellij config..."
+  mkdir -p ~/.config/zellij
+  if [[ -f ~/.config/zellij/config.kdl && ! -L ~/.config/zellij/config.kdl ]]; then
+    mv ~/.config/zellij/config.kdl ~/.config/zellij/config.kdl.backup
+    echo "    Backed up existing config.kdl to ~/.config/zellij/config.kdl.backup"
+  fi
+  ln -sf "$REPO_DIR/zellij/config.kdl" ~/.config/zellij/config.kdl
+fi
+
 # Symlink tmux config (Linux/WSL only — for SSH cloud dev sessions)
 if [[ "$OSTYPE" == linux* && -f "$REPO_DIR/.tmux.conf" ]]; then
   echo "==> Symlinking .tmux.conf..."

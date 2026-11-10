@@ -29,6 +29,8 @@ case "$ARCH_RAW" in
   *)              echo "Warning: unknown arch $ARCH_RAW — fallbacks may fail"
                   RG_ARCH="x86_64-unknown-linux-musl"; NVIM_ARCH="x86_64"; BTOP_ARCH="x86_64-unknown-linux-musl"  ;;
 esac
+# zellij and btop both ship static musl builds under the same target triple
+ZELLIJ_ARCH="$BTOP_ARCH"
 
 # --- install packages from packages.txt, one at a time (don't abort on miss) -
 echo "==> Installing packages (missing ones are skipped; fallbacks run after)..."
@@ -116,6 +118,25 @@ if ! command -v btop &>/dev/null; then
   fi
   popd >/dev/null
   rm -rf "$TMPDIR_BT"
+fi
+
+# --- zellij ------------------------------------------------------------------
+# Not in the default apt/yum repos, so always use the static musl release.
+# On cloud dev boxes this is what keeps long-running agent sessions alive:
+# detach (or just drop the SSH connection), come back, `zellij attach`.
+if ! command -v zellij &>/dev/null; then
+  echo "==> Installing zellij ($ARCH_RAW) from GitHub release..."
+  TARBALL="zellij-${ZELLIJ_ARCH}.tar.gz"
+  TMPDIR_ZJ="$(mktemp -d)"
+  pushd "$TMPDIR_ZJ" >/dev/null
+  if curl -fLO "https://github.com/zellij-org/zellij/releases/latest/download/${TARBALL}"; then
+    tar xzf "$TARBALL"
+    sudo cp zellij /usr/local/bin/ && echo "    [ok] zellij installed"
+  else
+    echo "    [warn] zellij release download failed — skipping"
+  fi
+  popd >/dev/null
+  rm -rf "$TMPDIR_ZJ"
 fi
 
 echo "==> Linux setup complete"

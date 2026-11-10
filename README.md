@@ -18,6 +18,7 @@ exec zsh
 - **Version managers** — [nvm](https://github.com/nvm-sh/nvm) (lazy-loaded), [pyenv](https://github.com/pyenv/pyenv), [mise](https://github.com/jdx/mise)
 - **CLI tools** — fzf, ripgrep, jq, neovim, btop, htop, yazi, zellij, gh
 - **Terminal** — [Ghostty](https://ghostty.org/) config (Citruszest theme, solid block cursor)
+- **zellij** — config (`zellij/config.kdl`, symlinked on both platforms); on Linux it's installed from GitHub releases, so cloud dev boxes get it too
 - **tmux** — starter config for Linux cloud dev sessions (`.tmux.conf`, symlinked on Linux only)
 - **IntelliJ IDEA** — portable IDE settings backup/restore (`intellij/`, secrets excluded)
 
@@ -29,6 +30,7 @@ exec zsh
 ├── .zshrc                      # Cross-platform zsh config
 ├── .tmux.conf                  # tmux config (Linux only)
 ├── ghostty/config              # Ghostty terminal settings
+├── zellij/config.kdl           # zellij keybindings & settings
 ├── platform/
 │   ├── common/setup.sh         # Zinit, nvm, pyenv, symlinks
 │   ├── mac/
